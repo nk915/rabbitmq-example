@@ -3,10 +3,16 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"time"
 
 	"github.com/go-redis/redis"
 	"github.com/streadway/amqp"
 )
+
+type Message struct {
+	ID      int    `json:"id"`
+	Content string `json:"content"`
+}
 
 // Use Redis to store message IDs
 var redisClient = redis.NewClient(&redis.Options{
@@ -20,6 +26,13 @@ func isMessageProcessed(messageID string) bool {
 		return false
 	}
 	return result == "processed"
+}
+
+func doSomething(message Message) error {
+	// Simulate processing time
+	time.Sleep(5 * time.Second)
+	log.Printf("Processed message: %v", message)
+	return nil
 }
 
 // Define function to process messages
