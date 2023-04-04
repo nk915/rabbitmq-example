@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -17,13 +18,10 @@ func failOnError(err error, msg string) {
 }
 
 func main() {
-	producer("exchange_headers", amqp.Table{
-		"animal_1": "rabbit",
-		"animal_2": "turtle",
-	})
+	producer("exchange_consistent_hash")
 }
 
-func producer(exchangeName string, headers amqp.Table) {
+func producer(exchangeName string) {
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
@@ -33,13 +31,13 @@ func producer(exchangeName string, headers amqp.Table) {
 	defer ch.Close()
 
 	err = ch.ExchangeDeclare(
-		exchangeName, // name
-		"headers",    // type
-		false,        // durable
-		false,        // auto-deleted
-		false,        // internal
-		false,        // no-wait
-		nil,          // arguments
+		exchangeName,        // name
+		"x-consistent-hash", // type
+		false,               // durable
+		false,               // auto-deleted
+		false,               // internal
+		false,               // no-wait
+		nil,                 // arguments
 	)
 	failOnError(err, "Failed to declare an exchange")
 
@@ -47,24 +45,25 @@ func producer(exchangeName string, headers amqp.Table) {
 	defer cancel()
 
 	body := bodyFrom(os.Args)
-	err = ch.PublishWithContext(ctx,
-		exchangeName, // exchange
-		"",           // routing key
-		false,        // mandatory
-		false,        // immediate
-		amqp.Publishing{
-			Headers:     headers,
-			ContentType: "text/plain",
-			Body:        []byte(body),
-		})
-	failOnError(err, "Failed to publish a message")
-
-	log.Printf(" [%v] Sent %s", headers, body)
+	for i := 0; i < 1000; i++ {
+		strIndex := strconv.Itoa(i)
+		err = ch.PublishWithContext(ctx,
+			exchangeName, // exchange
+			strIndex,     // routing key
+			false,        // mandatory
+			false,        // immediate
+			amqp.Publishing{
+				ContentType: "text/plain",
+				Body:        []byte(strIndex + ":" + body),
+			})
+		failOnError(err, "Failed to publish a message")
+		log.Printf(" Sent %s", body)
+	}
 }
 
 func bodyFrom(args []string) string {
 	var s string
-	if (len(args) < 2) || os.Args[2] == "" {
+	if len(args) < 2 {
 		s = "hello"
 	} else {
 		s = strings.Join(args[1:], " ")
