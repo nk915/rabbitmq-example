@@ -36,7 +36,7 @@ func main() {
 		exchangeName, // name
 		"fanout",     // type
 		false,        // durable
-		false,        // auto-deleted
+		true,         // auto-deleted
 		false,        // internal
 		false,        // no-wait
 		nil,          // arguments
@@ -46,8 +46,8 @@ func main() {
 	q, err := ch.QueueDeclare(
 		queueName, // name
 		false,     // durable
-		false,     // delete when unused
-		true,      // exclusive
+		true,      // delete when unused
+		false,     // exclusive
 		false,     // no-wait
 		nil,       // arguments
 	)

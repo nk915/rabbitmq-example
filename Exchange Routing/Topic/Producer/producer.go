@@ -33,7 +33,7 @@ func producer(topicName string) {
 		topicName, // name
 		"topic",   // type
 		false,     // durable
-		false,     // auto-deleted
+		true,      // auto-deleted
 		false,     // internal
 		false,     // no-wait
 		nil,       // arguments

@@ -38,7 +38,7 @@ func consumer(topicName string) {
 		topicName, // name
 		"topic",   // type
 		false,     // durable
-		false,     // auto-deleted
+		true,      // auto-deleted
 		false,     // internal
 		false,     // no-wait
 		nil,       // arguments
@@ -48,8 +48,8 @@ func consumer(topicName string) {
 	q, err := ch.QueueDeclare(
 		"",    // name
 		false, // durable
-		false, // delete when unused
-		true,  // exclusive
+		true,  // delete when unused
+		false, // exclusive
 		false, // no-wait
 		nil,   // arguments
 	)

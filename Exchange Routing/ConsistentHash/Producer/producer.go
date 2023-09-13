@@ -34,7 +34,7 @@ func producer(exchangeName string) {
 		exchangeName,        // name
 		"x-consistent-hash", // type
 		false,               // durable
-		false,               // auto-deleted
+		true,                // auto-deleted
 		false,               // internal
 		false,               // no-wait
 		nil,                 // arguments

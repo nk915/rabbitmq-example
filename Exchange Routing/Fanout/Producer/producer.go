@@ -23,7 +23,7 @@ func main() {
 		"exchange_fanout", // name
 		"fanout",          // type
 		false,             // durable
-		false,             // auto-deleted
+		true,              // auto-deleted
 		false,             // internal
 		false,             // no-wait
 		nil,               // arguments

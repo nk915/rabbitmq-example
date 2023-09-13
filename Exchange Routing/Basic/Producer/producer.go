@@ -19,12 +19,12 @@ func main() {
 	failOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
-	exchangeName := "exchange_basic"
+	exchangeName := "basic_exchange"
 	err = ch.ExchangeDeclare(
 		exchangeName, // name
 		"fanout",     // type
 		false,        // durable
-		false,        // auto-deleted
+		true,         // auto-deleted
 		false,        // internal
 		false,        // no-wait
 		nil,          // arguments

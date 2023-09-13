@@ -34,7 +34,7 @@ func consumer(exchangeName string) {
 		exchangeName,        // name
 		"x-consistent-hash", // type
 		false,               // durable
-		false,               // auto-deleted
+		true,                // auto-deleted
 		false,               // internal
 		false,               // no-wait
 		nil,                 // arguments
@@ -74,8 +74,10 @@ func consumer(exchangeName string) {
 	var forever chan struct{}
 
 	go func() {
+		count := 0
 		for d := range msgs {
-			log.Printf(" [%s] %s", q.Name, d.Body)
+			count = count + 1
+			log.Printf(" [%s] %s (count: %d)", q.Name, d.Body, count)
 		}
 	}()
 
